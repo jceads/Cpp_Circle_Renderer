@@ -11,6 +11,7 @@
 #include "Model/Vertex.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#include "../include/VertexArrayObject.h"
 
 enum class Directions { up, down };
 
@@ -79,8 +80,10 @@ int main()
 
     // makeCircle(.5f, 12);
     buildSquare(1.0f);
-    int            width, height, nrChannels;
-    unsigned char* textureData = stbi_load("./data/images/wood1.jpg", &width, &height, &nrChannels, 0);
+    int                       width, height, nrChannels;
+    unsigned char*            textureData = stbi_load("./data/images/container.jpg", &width, &height, &nrChannels, 0);
+    OpenGL::VertexArrayObject vao;
+    vao.Build(m_Vertices, m_Indices);
 
 
     glGenTextures(1, &Texture);
@@ -117,58 +120,39 @@ int main()
     position = glm::vec3(0.0f, 0.0f, 0.0f);
 
 
-    glGenVertexArrays(1, &VAO);
-
-    glGenBuffers(1, &VBO);
-
-    glGenBuffers(1, &EBO);
-
-    glBindVertexArray(VAO);
-
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-    glBufferData(GL_ARRAY_BUFFER, sizeof(OpenGL::Vertex) * m_Vertices.size(), m_Vertices.data(),GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3,GL_FLOAT,GL_FALSE, 8 * sizeof(float), static_cast<void*>(0));
-    glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(1, 3,GL_FLOAT,GL_FALSE, 8 * sizeof(float), (void*)(sizeof(float) * 3));
-    glEnableVertexAttribArray(1);
-
-    glVertexAttribPointer(2, 2,GL_FLOAT,GL_FALSE, 8 * sizeof(float), (void*)(sizeof(float) * 6));
-    glEnableVertexAttribArray(2);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * m_Indices.size(), m_Indices.data(),GL_STATIC_DRAW);
-
+    glEnable(GL_DEPTH_TEST);
 
     //MAIN LOOP
 
     glm::mat4 mtxProjection{glm::perspective(glm::radians(90.0f), (float)wWidth / (float)wHeight, 0.1f, 1000.0f)};
 
-    glm::vec3 camPosition{0.0f, 0.0f, 5.0f};
+    glm::vec3 camPosition{0.0f, 0.0f, 2.0f};
     glm::vec3 cameraLookAt{0.0f, 0.0f, 0.0f};
     glm::vec3 cameraUp{0.0f, 1.0f, 0.0f};
     glm::mat4 mtxCamera = glm::lookAt(camPosition, cameraLookAt, cameraUp);
+    float     angle     = 1.0f;
 
     while (!glfwWindowShouldClose(window))
     {
         glClearColor(0.3f, 0.2f, 0.5f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // do_rotation(mtxTransform, m_Shader);
         m_Shader.Use();
 
         // glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, Texture);
-        glBindVertexArray(VAO);
+        // glBindVertexArray(VAO);
+        vao.Activate();
         glDrawElements(GL_TRIANGLES, m_Indices.size(),GL_UNSIGNED_INT, 0);
 
-        m_Shader.setVec4("uColor", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+        glm::mat4 mtxRotation = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(1.0f, 0.0f, 1.0f));
 
+        angle += 0.2f;
 
-        glm::mat4 mtxTranslation = glm::translate(glm::mat4(1), position);
-        mtxTransform             = mtxProjection * mtxCamera * mtxTranslation;
+        // glm::mat4 mtxTranslation = glm::translate(glm::mat4(1), position);
+        // mtxTransform             = mtxProjection * mtxCamera * mtxTranslation;
+        mtxTransform = mtxProjection * mtxCamera * mtxRotation;
         m_Shader.setMat4("uMtxTransform", &mtxTransform);
 
         // do_animation(currentDir);
@@ -177,6 +161,7 @@ int main()
         glfwPollEvents();
     }
 
+    vao.DeActivate();
     glfwTerminate();
     return 0;
 }
@@ -219,35 +204,96 @@ void do_animation(Directions& dir)
 
 void buildSquare(float length)
 {
-    OpenGL::Vertex v0, v1, v2, v3;
-    v0.position = glm::vec3(-length / 2, length / 2, 0.0f);
-    v1.position = glm::vec3(-length / 2, -length / 2, 0.0f);
-    v2.position = glm::vec3(length / 2, -length / 2, 0.0f);
-    v3.position = glm::vec3(length / 2, length / 2, 0.0f);
+    // OpenGL::Vertex v0, v1, v2, v3, v4, v5, v6, v7;
+    glm::vec3 v[8];
+    // v0.position = glm::vec3(-length / 2, length / 2, 0.0f);
+    // v1.position = glm::vec3(-length / 2, -length / 2, 0.0f);
+    // v2.position = glm::vec3(length / 2, -length / 2, 0.0f);
+    // v3.position = glm::vec3(length / 2, length / 2, 0.0f);
 
-    v0.texture = glm::vec2(0.0f, 1.0f);
-    v1.texture = glm::vec2(0.0f, 0.0f);
-    v2.texture = glm::vec2(1.0f, 0.0f);
-    v3.texture = glm::vec2(1.0f, 1.0f);
+    v[0] = glm::vec3(-length / 2, -length / 2, -length / 2);
+    v[1] = glm::vec3(length / 2, -length / 2, -length / 2);
+    v[2] = glm::vec3(length / 2, -length / 2, length / 2);
+    v[3] = glm::vec3(-length / 2, -length / 2, length / 2);
 
-    v0.texture = glm::vec2(1.0f, 1.0f);
-    v1.texture = glm::vec2(1.0f, 0.0f);
-    v2.texture = glm::vec2(0.0f, 0.0f);
-    v3.texture = glm::vec2(0.0f, 1.0f);
+    v[4] = glm::vec3(-length / 2, length / 2, -length / 2);
+    v[5] = glm::vec3(length / 2, length / 2, -length / 2);
+    v[6] = glm::vec3(length / 2, length / 2, length / 2);
+    v[7] = glm::vec3(-length / 2, length / 2, length / 2);
 
 
-    m_Vertices.push_back(v0);
-    m_Vertices.push_back(v1);
-    m_Vertices.push_back(v2);
-    m_Vertices.push_back(v3);
+    OpenGL::Vertex tempVertices[24];
+    tempVertices[0].position = v[7];
+    tempVertices[1].position = v[3];
+    tempVertices[2].position = v[2];
+    tempVertices[3].position = v[6];
 
-    m_Indices.push_back(0);
-    m_Indices.push_back(1);
-    m_Indices.push_back(3);
+    tempVertices[0].texture = glm::vec2(0.0f, 1.0f);
+    tempVertices[1].texture = glm::vec2(0.0f, 0.0f);
+    tempVertices[2].texture = glm::vec2(1.0f, 0.0f);
+    tempVertices[3].texture = glm::vec2(1.0f, 1.0f);
 
-    m_Indices.push_back(1);
-    m_Indices.push_back(2);
-    m_Indices.push_back(3);
+    tempVertices[4].position = v[6];
+    tempVertices[5].position = v[2];
+    tempVertices[6].position = v[1];
+    tempVertices[7].position = v[5];
+    tempVertices[4].texture  = glm::vec2(0.0f, 1.0f);
+    tempVertices[5].texture  = glm::vec2(0.0f, 0.0f);
+    tempVertices[6].texture  = glm::vec2(1.0f, 0.0f);
+    tempVertices[7].texture  = glm::vec2(1.0f, 1.0f);
+    //    //Ust Yuzey
+    tempVertices[8].position  = v[4];
+    tempVertices[9].position  = v[7];
+    tempVertices[10].position = v[6];
+    tempVertices[11].position = v[5];
+    tempVertices[8].texture   = glm::vec2(0.0f, 1.0f);
+    tempVertices[9].texture   = glm::vec2(0.0f, 0.0f);
+    tempVertices[10].texture  = glm::vec2(1.0f, 0.0f);
+    tempVertices[11].texture  = glm::vec2(1.0f, 1.0f);
+
+    //Sol Yüzey
+    tempVertices[12].position = v[0];
+    tempVertices[13].position = v[3];
+    tempVertices[14].position = v[2];
+    tempVertices[15].position = v[1];
+    tempVertices[12].texture  = glm::vec2(0.0f, 1.0f);
+    tempVertices[13].texture  = glm::vec2(0.0f, 0.0f);
+    tempVertices[14].texture  = glm::vec2(1.0f, 0.0f);
+    tempVertices[15].texture  = glm::vec2(1.0f, 1.0f);
+    //Sag Yuzey
+    tempVertices[16].position = v[4];
+    tempVertices[17].position = v[0];
+    tempVertices[18].position = v[1];
+    tempVertices[19].position = v[5];
+    tempVertices[16].texture  = glm::vec2(0.0f, 1.0f);
+    tempVertices[17].texture  = glm::vec2(0.0f, 0.0f);
+    tempVertices[18].texture  = glm::vec2(1.0f, 0.0f);
+    tempVertices[19].texture  = glm::vec2(1.0f, 1.0f);
+    //    //Alt Yuzey
+    tempVertices[20].position = v[7];
+    tempVertices[21].position = v[3];
+    tempVertices[22].position = v[0];
+    tempVertices[23].position = v[4];
+    tempVertices[20].texture  = glm::vec2(0.0f, 1.0f);
+    tempVertices[21].texture  = glm::vec2(0.0f, 0.0f);
+    tempVertices[22].texture  = glm::vec2(1.0f, 0.0f);
+    tempVertices[23].texture  = glm::vec2(1.0f, 1.0f);
+
+    for (int i = 0; i < 24; ++i)
+    {
+        m_Vertices.push_back(tempVertices[i]);
+    }
+    for (int i = 0; i < 6; ++i)
+    {
+        int startIndex = 4 * i;
+        m_Indices.push_back(startIndex);
+        m_Indices.push_back(startIndex + 1);
+        m_Indices.push_back(startIndex + 1);
+
+        m_Indices.push_back(startIndex);
+        m_Indices.push_back(startIndex + 2);
+        m_Indices.push_back(startIndex + 3);
+    }
 }
 
 void generateIndices(std::vector<unsigned int>& indexList, const int triangleCount)
