@@ -2,7 +2,7 @@
 #include <GLFW/glfw3.h>
 #include "glm/vec3.hpp"
 #include "glm/glm.hpp"
-#include "glm/gtx/matrix_transform_2d.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 #include <cmath>
 #include <iostream>
 #include <string>
@@ -24,7 +24,7 @@ void generateIndices(std::vector<unsigned int>& indexList, const int triangleCou
 bool compare_float(float x, float y, float epsilon = 0.1f);
 void do_animation(Directions& currentDir);
 void buildSquare(float length);
-void do_rotation(glm::mat3& mtxTransform, OpenGL::Shader& m_Shader);
+void do_rotation(glm::mat4& mtxTransform, OpenGL::Shader& m_Shader);
 
 //variables
 int                         wWidth, wHeight;
@@ -37,7 +37,7 @@ std::vector<unsigned int>   m_Indices;
 float shaderMoveValue{0.f}, m_rotation_angle{1.0f}, scale{1.f};
 //--
 float     keyStrength{2.f};
-glm::vec2 position;
+glm::vec3 position;
 int       sampleCount = 0;
 
 
@@ -112,7 +112,9 @@ int main()
 
     stbi_image_free(textureData);
 
-    glm::mat3 mtxTransform{m_rotation_angle};
+    glm::mat4 mtxTransform{m_rotation_angle};
+
+    position = glm::vec3(0.0f, 0.0f, 0.0f);
 
 
     glGenVertexArrays(1, &VAO);
@@ -140,14 +142,21 @@ int main()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * m_Indices.size(), m_Indices.data(),GL_STATIC_DRAW);
 
 
-    //MAIN LOOP 
+    //MAIN LOOP
+
+    glm::mat4 mtxProjection{glm::perspective(glm::radians(90.0f), (float)wWidth / (float)wHeight, 0.1f, 1000.0f)};
+
+    glm::vec3 camPosition{0.0f, 0.0f, 5.0f};
+    glm::vec3 cameraLookAt{0.0f, 0.0f, 0.0f};
+    glm::vec3 cameraUp{0.0f, 1.0f, 0.0f};
+    glm::mat4 mtxCamera = glm::lookAt(camPosition, cameraLookAt, cameraUp);
 
     while (!glfwWindowShouldClose(window))
     {
         glClearColor(0.3f, 0.2f, 0.5f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        do_rotation(mtxTransform, m_Shader);
+        // do_rotation(mtxTransform, m_Shader);
         m_Shader.Use();
 
         // glActiveTexture(GL_TEXTURE0);
@@ -155,8 +164,12 @@ int main()
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, m_Indices.size(),GL_UNSIGNED_INT, 0);
 
-
         m_Shader.setVec4("uColor", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+
+
+        glm::mat4 mtxTranslation = glm::translate(glm::mat4(1), position);
+        mtxTransform             = mtxProjection * mtxCamera * mtxTranslation;
+        m_Shader.setMat4("uMtxTransform", &mtxTransform);
 
         // do_animation(currentDir);
 
@@ -166,6 +179,18 @@ int main()
 
     glfwTerminate();
     return 0;
+}
+
+void moveCamera(int key, glm::vec3& camPos)
+{
+    if (key == GLFW_KEY_A)
+    {
+        camPos.x -= 0.1f * keyStrength;
+    }
+    if (key == GLFW_KEY_A)
+    {
+        camPos.x -= 0.1f * keyStrength;
+    }
 }
 
 void do_animation(Directions& dir)
@@ -204,15 +229,6 @@ void buildSquare(float length)
     v1.texture = glm::vec2(0.0f, 0.0f);
     v2.texture = glm::vec2(1.0f, 0.0f);
     v3.texture = glm::vec2(1.0f, 1.0f);
-    // v0.position = glm::vec3(0.5f, 0.5f, 0.0f);
-    // v1.position = glm::vec3(0.5f, -0.5f, 0.0f);
-    // v2.position = glm::vec3(-0.5f, -0.5f, 0.0f);
-    // v3.position = glm::vec3(-0.5f, 0.5f, 0.0f);
-    //
-    // v0.color = glm::vec3(1.0f, 0.0f, 0.0f);
-    // v1.color = glm::vec3(0.0f, 1.0f, 0.0f);
-    // v2.color = glm::vec3(0.0f, 0.0f, 1.0f);
-    // v3.color = glm::vec3(1.0f, 1.0f, 0.0f);
 
     v0.texture = glm::vec2(1.0f, 1.0f);
     v1.texture = glm::vec2(1.0f, 0.0f);
@@ -244,13 +260,13 @@ void generateIndices(std::vector<unsigned int>& indexList, const int triangleCou
     }
 }
 
-void do_rotation(glm::mat3& transform, OpenGL::Shader& shader)
+void do_rotation(glm::mat4& transform, OpenGL::Shader& shader)
 {
-    shader.setMat3("uMtxTransform", &transform);
-    const glm::mat3 mtxRotation    = rotate(glm::mat3{1}, glm::radians(m_rotation_angle));
-    const glm::mat3 mtxTranslation = glm::translate(glm::mat3{1}, position);
-    const glm::mat3 mtxScale       = glm::scale(glm::mat3{1}, glm::vec2{scale, scale});
-    transform                      = mtxTranslation * mtxRotation * mtxScale;
+    shader.setMat4("uMtxTransform", &transform);
+    // const glm::mat4 mtxRotation    = rotate(glm::mat3{1}, glm::radians(m_rotation_angle));
+    const glm::mat4 mtxTranslation = glm::translate(glm::mat4{1}, position);
+    // const glm::mat4 mtxScale       = glm::scale(glm::mat3{1}, glm::vec2{scale, scale});
+    transform = mtxTranslation; //* mtxRotation * mtxScale;
     m_rotation_angle += 1.0f;
 }
 
@@ -260,23 +276,25 @@ bool compare_float(float x, float y, float epsilon)
     return fabs(x - y) < epsilon;
 }
 
-// void makeCircle(float radius, int vertexCount)
-// {
-//     const float            angle         = 360.0f / vertexCount;
-//     const int              triangleCount = vertexCount - 2;
-//     std::vector<glm::vec3> tempVertices;
-//     for (int i = 0; i < vertexCount; i++)
-//     {
-//         const float newAngle = glm::radians(angle * i);
-//         m_Vertices.emplace_back(
-//             radius * cos(newAngle),
-//             radius * sin(newAngle),
-//             1.0f
-//         );
-//     }
-//
-//     generateIndices(m_Indices, triangleCount);
-// }
+void makeCircle(float radius, int vertexCount)
+{
+    const float            angle         = 360.0f / vertexCount;
+    const int              triangleCount = vertexCount - 2;
+    std::vector<glm::vec3> tempVertices;
+    for (int i = 0; i < vertexCount; i++)
+    {
+        const float newAngle = glm::radians(angle * i);
+        m_Vertices.emplace_back(
+            OpenGL::Vertex{
+                glm::vec3(radius * cos(newAngle),
+                          radius * sin(newAngle),
+                          1.0f)
+            }
+        );
+    }
+
+    generateIndices(m_Indices, triangleCount);
+}
 
 
 void frameBufferSizeCallBack(GLFWwindow* window, int width, int height)

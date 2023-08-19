@@ -18,8 +18,8 @@ OpenGL::Shader::~Shader()
 void OpenGL::Shader::AttachShader(const std::string& fileName, uint32_t shaderType) const
 {
     const uint32_t shaderId = glCreateShader(shaderType);
-    const auto src = getShaderFromFile(fileName);
-    const char* c_src = &src[0];
+    const auto     src      = getShaderFromFile(fileName);
+    const char*    c_src    = &src[0];
     glShaderSource(shaderId, 1, &c_src, 0);
     glCompileShader(shaderId);
     if (!check_error(shaderId, GL_COMPILE_STATUS))
@@ -33,7 +33,7 @@ void OpenGL::Shader::AttachShader(const std::string& fileName, uint32_t shaderTy
 bool OpenGL::Shader::check_error(uint32_t shaderId, int type)
 {
     char log[512];
-    int isCompiled;
+    int  isCompiled;
     glGetShaderiv(shaderId, type, &isCompiled);
     if (!isCompiled)
     {
@@ -46,7 +46,7 @@ bool OpenGL::Shader::check_error(uint32_t shaderId, int type)
 
 bool OpenGL::Shader::check_linking_error(uint32_t programId)
 {
-    int isLinked;
+    int  isLinked;
     char log[512];
     glGetProgramiv(programId,GL_LINK_STATUS, &isLinked);
     if (!isLinked)
@@ -104,10 +104,15 @@ void OpenGL::Shader::setMat3(const std::string& varName, const glm::mat3* ptrVal
     glUniformMatrix3fv(m_UniformVars[varName], 1, false, (float*)ptrValue);
 }
 
+void OpenGL::Shader::setMat4(const std::string& varName, const glm::mat4* ptrValue)
+{
+    glUniformMatrix4fv(m_UniformVars[varName], 1, false, (GLfloat*)ptrValue);
+}
+
 std::string OpenGL::Shader::getShaderFromFile(const std::string& fileName)
 {
     std::ifstream file(fileName);
-    std::string data;
+    std::string   data;
     if (file.is_open())
     {
         char readChar;
