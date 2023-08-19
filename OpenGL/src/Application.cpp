@@ -1,18 +1,18 @@
 #include "GL/glew.h"
-#include <GLFW/glfw3.h>
-#include "glm/vec3.hpp"
+#include "GLFW/glfw3.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include <cmath>
 #include <iostream>
 #include <string>
 #include <vector>
-#include "Model/Vertex.h"
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-#include "Model/Mesh.h"
-#include "Model/Shader.h"
-#include "Model/VertexArrayObject.h"
+#include "Mesh.h"
+#include "Shader.h"
+ #include "stb/stb_image.h"
+//#include "../../Dependencies/include/stb/stb_image.h"
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
 
 enum class Directions { up, down };
 
@@ -59,6 +59,7 @@ int main()
     glfwSetKeyCallback(window, keyCallBack);
     glfwSetFramebufferSizeCallback(window, frameBufferSizeCallBack);
     glfwSwapInterval(1);
+
 
     if (glewInit() != GLEW_OK)
     {
@@ -118,8 +119,19 @@ int main()
     glEnable(GL_DEPTH_TEST);
 
     //MAIN LOOP
+    IMGUI_CHECKVERSION();
+    // ImGui_ImplGlfw_InitForOpenGL( window, true );
 
-    const glm::mat4 mtxProjection{glm::perspective(glm::radians(90.0f), (float)wWidth / (float)wHeight, 0.1f, 1000.0f)};
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+
+    ImGui_ImplGlfw_InitForOpenGL(window, false);
+    const glm::mat4 mtxProjection{
+        glm::perspective(glm::radians(90.0f),
+                         static_cast<float>(wWidth) / static_cast<float>(wHeight),
+                         0.1f, 1000.0f)
+    };
 
     constexpr glm::vec3 camPosition{0.0f, 0.0f, 2.0f};
     constexpr glm::vec3 cameraLookAt{0.0f, 0.0f, 0.0f};
@@ -137,11 +149,12 @@ int main()
         glBindTexture(GL_TEXTURE_2D, Texture);
 
         mesh->Draw();
-        glm::mat4 mtxRotation = rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(1.0f, 0.0f, 1.0f));
+        glm::mat4 mtxRotation = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(1.0f, 0.0f, 1.0f));
 
         angle += 0.2f;
 
         mtxTransform = mtxProjection * mtxCamera * mtxRotation;
+
         m_Shader.setMat4("uMtxTransform", &mtxTransform);
 
 

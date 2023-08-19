@@ -1,4 +1,8 @@
 ﻿#pragma once
+#include <map>
+#include <string>
+
+#include "VertexArrayObject.h"
 
 namespace OpenGL
 {
@@ -13,6 +17,7 @@ namespace OpenGL
 
     private:
         MeshManager() = default;
-        static MeshManager* m_Instance;
+        static MeshManager*                       m_Instance;
+        std::map<std::string, VertexArrayObject*> m_VaoMap;
     };
 }
