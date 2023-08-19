@@ -126,6 +126,6 @@ OpenGL::Mesh* OpenGL::MeshManager::createCube()
 
 OpenGL::MeshManager::~MeshManager()
 {
-    delete m_Instance;
-    m_Instance = nullptr;
+    // delete m_Instance;
+    // m_Instance = nullptr;
 }

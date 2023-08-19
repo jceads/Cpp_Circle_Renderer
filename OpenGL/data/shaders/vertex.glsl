@@ -12,7 +12,7 @@ uniform mat4 uMtxTransform;
 
 void main()
 {
-    gl_Position = vec4(aPos, 1.0f) * uMtxTransform;
+    gl_Position = uMtxTransform*vec4(aPos, 1.0);
     ourColor = aColor;
     TexCoord = aTexCoord;
 }

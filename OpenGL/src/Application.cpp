@@ -9,10 +9,11 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "Mesh.h"
 #include "Shader.h"
- #include "stb/stb_image.h"
+#include "stb/stb_image.h"
 //#include "../../Dependencies/include/stb/stb_image.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
 
 enum class Directions { up, down };
 
@@ -30,6 +31,8 @@ void do_rotation(glm::mat4& mtxTransform, OpenGL::Shader& m_Shader);
 int      wWidth, wHeight;
 uint32_t VBO,    VAO, EBO, Texture;
 
+std::vector<std::string> dragAndDroppedFiles;
+
 
 //matrix related
 float shaderMoveValue{0.f}, m_rotation_angle{1.0f}, scale{1.f};
@@ -43,8 +46,8 @@ int main()
 {
     if (!glfwInit())
         return -1;
-    wHeight = 1000;
-    wWidth  = 1000;
+    wHeight = 600;
+    wWidth  = 800;
 
 
     GLFWwindow* window = glfwCreateWindow(wWidth, wHeight, "Hello World", nullptr, nullptr);
@@ -120,20 +123,23 @@ int main()
 
     //MAIN LOOP
     IMGUI_CHECKVERSION();
-    // ImGui_ImplGlfw_InitForOpenGL( window, true );
-
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
+    // io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // IF using Docking Branch
 
-    ImGui_ImplGlfw_InitForOpenGL(window, false);
-    const glm::mat4 mtxProjection{
-        glm::perspective(glm::radians(90.0f),
-                         static_cast<float>(wWidth) / static_cast<float>(wHeight),
-                         0.1f, 1000.0f)
-    };
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init();
+    float fov       = 90.0f;
+    float nearPlane = 0.1f, farPlane = 1000.0f;
+    // const glm::mat4 mtxProjection(
+    //     glm::perspective(glm::radians(fov),
+    //                      static_cast<float>(wWidth) / static_cast<float>(wHeight),
+    //                      nearPlane, farPlane)
+    // );
 
-    constexpr glm::vec3 camPosition{0.0f, 0.0f, 2.0f};
+    constexpr glm::vec3 camPosition{2.0f, 2.0f, 2.0f};
     constexpr glm::vec3 cameraLookAt{0.0f, 0.0f, 0.0f};
     constexpr glm::vec3 cameraUp{0.0f, 1.0f, 0.0f};
     const glm::mat4     mtxCamera = glm::lookAt(camPosition, cameraLookAt, cameraUp);
@@ -141,22 +147,37 @@ int main()
 
     while (!glfwWindowShouldClose(window))
     {
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+
+        ImGui::NewFrame();
+        ImGui::ShowDemoWindow();
+
+        ImGui::SliderFloat("rotation", &angle, 0, 360);
+        ImGui::SliderFloat("Near Plane", &nearPlane, 0.01f, 120.0f);
+        ImGui::SliderFloat("far Plane", &farPlane, 100.0f, 2000.0f);
+        ImGui::SliderFloat("Field of View", &fov, 30.0f, 120.0f);
+
+        for (const auto& item : dragAndDroppedFiles)
+        {
+            ImGui::Text(item.c_str());
+        }
+
         glClearColor(0.3f, 0.2f, 0.5f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         m_Shader.Use();
-
         glBindTexture(GL_TEXTURE_2D, Texture);
-
         mesh->Draw();
         glm::mat4 mtxRotation = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(1.0f, 0.0f, 1.0f));
 
-        angle += 0.2f;
-
+        glm::mat4 mtxProjection = glm::perspective(glm::radians(fov),
+                                                   static_cast<float>(wWidth) / static_cast<float>(wHeight), nearPlane,
+                                                   farPlane);
         mtxTransform = mtxProjection * mtxCamera * mtxRotation;
-
         m_Shader.setMat4("uMtxTransform", &mtxTransform);
 
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -164,6 +185,9 @@ int main()
 
     delete mesh;
     delete mesh_manager;
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
     glfwTerminate();
     return 0;
 }
@@ -221,10 +245,8 @@ void generateIndices(std::vector<unsigned int>& indexList, const int triangleCou
 void do_rotation(glm::mat4& transform, OpenGL::Shader& shader)
 {
     shader.setMat4("uMtxTransform", &transform);
-    // const glm::mat4 mtxRotation    = rotate(glm::mat3{1}, glm::radians(m_rotation_angle));
     const glm::mat4 mtxTranslation = glm::translate(glm::mat4{1}, position);
-    // const glm::mat4 mtxScale       = glm::scale(glm::mat3{1}, glm::vec2{scale, scale});
-    transform = mtxTranslation; //* mtxRotation * mtxScale;
+    transform                      = mtxTranslation; //* mtxRotation * mtxScale;
     m_rotation_angle += 1.0f;
 }
 
@@ -237,18 +259,10 @@ bool compare_float(float x, float y, float epsilon)
 
 void frameBufferSizeCallBack(GLFWwindow* window, int width, int height)
 {
-    if (width != wWidth)
-    {
-        wWidth = width;
-        glViewport(0, 0, wWidth, wWidth);
-        glfwSetWindowSize(window, wWidth, wWidth);
-    }
-    else if (wHeight != height)
-    {
-        wHeight = height;
-        glViewport(0, 0, wHeight, wHeight);
-        glfwSetWindowSize(window, wHeight, wHeight);
-    }
+    wWidth  = width;
+    wHeight = height;
+    glViewport(0, 0, width, height);
+    glfwSetWindowSize(window, width, height);
 }
 
 void keyCallBack(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -310,5 +324,8 @@ void drop_callback(GLFWwindow* window, int path_count, const char* paths[])
 {
     std::cout << "path count " << path_count << std::endl;
     for (int i = 0; i < path_count; i++)
-        std::cout << paths[i] << std::endl;
+    {
+        dragAndDroppedFiles.push_back(std::string(paths[i]));
+    }
+    // std::cout << paths[i] << std::endl;
 }
