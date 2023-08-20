@@ -8,6 +8,7 @@ namespace OpenGL
     class Mesh
     {
     public:
+        ~Mesh();
         void Draw() const;
 
     private:
