@@ -2,6 +2,7 @@
 #include <map>
 #include <string>
 
+#include "VAOManager.h"
 #include "VertexArrayObject.h"
 
 namespace OpenGL
@@ -11,13 +12,11 @@ namespace OpenGL
     class MeshManager
     {
     public:
-        static MeshManager* GetInstance();
         ~MeshManager();
-        Mesh* createCube();
+        MeshManager(VAOManager* vao_manager);
+        Mesh* createCube() const;
 
     private:
-        MeshManager() = default;
-        static MeshManager*                       m_Instance;
-        std::map<std::string, VertexArrayObject*> m_VaoMap;
+        VAOManager* m_VaoManager;
     };
 }

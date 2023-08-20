@@ -15,7 +15,7 @@ namespace OpenGL
         void Activate() const;
         void DeActivate();
         int  GetIndexCount() const;
-        int  getVertexCount() const;
+        int  GetVertexCount() const;
 
     private:
         unsigned int m_VaoId;

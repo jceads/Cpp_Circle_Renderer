@@ -1,26 +1,24 @@
 ﻿#include "MeshManager.h"
-
 #include <vector>
-#include "glm/glm.hpp"
-
 #include "Mesh.h"
 #include "Vertex.h"
 #include "VertexArrayObject.h"
-OpenGL::MeshManager* OpenGL::MeshManager::m_Instance = nullptr;
+#include "glm/glm.hpp"
 
-OpenGL::MeshManager* OpenGL::MeshManager::GetInstance()
+
+OpenGL::MeshManager::~MeshManager()
 {
-    if (m_Instance == nullptr)
-    {
-        m_Instance = new MeshManager();
-        return m_Instance;
-    }
-    return m_Instance;
+    delete m_VaoManager;
 }
 
-OpenGL::Mesh* OpenGL::MeshManager::createCube()
+OpenGL::MeshManager::MeshManager(VAOManager* vao_manager)
 {
-    if (m_VaoMap.count("cubeWithTexture") == 0)
+    m_VaoManager = vao_manager;
+}
+
+OpenGL::Mesh* OpenGL::MeshManager::createCube() const
+{
+    if (!m_VaoManager->GetVao("cubeTex"))
     {
         std::vector<Vertex>       m_Vertices;
         std::vector<unsigned int> m_Indices;
@@ -113,19 +111,14 @@ OpenGL::Mesh* OpenGL::MeshManager::createCube()
 
         auto* vao = new VertexArrayObject();
         vao->Build(m_Vertices, m_Indices);
-        m_VaoMap["cubeWithTexture"] = vao;
+        m_VaoManager->AddNewObject("cubeTex", vao);
     }
 
 
-    auto* mesh         = new Mesh();
-    mesh->m_Vao        = m_VaoMap["cubeWithTexture"];
-    mesh->m_IndexCount = m_VaoMap["cubeWithTexture"]->GetIndexCount();
+    auto* mesh          = new Mesh();
+    mesh->m_Vao         = m_VaoManager->GetVao("cubeTex");
+    mesh->m_IndexCount  = mesh->m_Vao->GetIndexCount();
+    mesh->m_VertexCount = mesh->m_Vao->GetVertexCount();
 
     return mesh;
-}
-
-OpenGL::MeshManager::~MeshManager()
-{
-    // delete m_Instance;
-    // m_Instance = nullptr;
 }

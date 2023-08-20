@@ -11,8 +11,9 @@ namespace OpenGL
         void Draw() const;
 
     private:
-        VertexArrayObject* m_Vao        = nullptr;
-        uint32_t           m_IndexCount = 0;
+        VertexArrayObject* m_Vao         = nullptr;
+        uint32_t           m_IndexCount  = 0;
+        uint32_t           m_VertexCount = 0;
         friend MeshManager;
     };
 }

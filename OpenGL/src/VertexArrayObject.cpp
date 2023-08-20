@@ -70,7 +70,7 @@ int OpenGL::VertexArrayObject::GetIndexCount() const
     return m_IndexCount;
 }
 
-int OpenGL::VertexArrayObject::getVertexCount() const
+int OpenGL::VertexArrayObject::GetVertexCount() const
 {
     return m_vertexCount;
 }

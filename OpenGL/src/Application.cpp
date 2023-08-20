@@ -6,11 +6,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#define STB_IMAGE_IMPLEMENTATION
 #include "Mesh.h"
 #include "Shader.h"
-#include "stb/stb_image.h"
-//#include "../../Dependencies/include/stb/stb_image.h"
+#include "Scene.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
@@ -46,8 +44,8 @@ int main()
 {
     if (!glfwInit())
         return -1;
-    wHeight = 600;
-    wWidth  = 800;
+    wHeight = 1000;
+    wWidth  = 1000;
 
 
     GLFWwindow* window = glfwCreateWindow(wWidth, wHeight, "Hello World", nullptr, nullptr);
@@ -78,41 +76,13 @@ int main()
     m_Shader.AddUniform("uMtxTransform");
     m_Shader.AddUniform("uColor");
 
+    const OpenGL::Scene m_Scene;
 
-    int                  width, height, nrChannels;
-    unsigned char*       textureData  = stbi_load("./data/images/container.jpg", &width, &height, &nrChannels, 0);
-    OpenGL::MeshManager* mesh_manager = OpenGL::MeshManager::GetInstance();
-    OpenGL::Mesh*        mesh         = mesh_manager->createCube();
+    const OpenGL::Mesh* mesh = m_Scene.GetMeshManager()->createCube();
 
 
-    glGenTextures(1, &Texture);
-    glBindTexture(GL_TEXTURE_2D, Texture);
+    Texture = m_Scene.GetTextureManager()->LoadTexture("./data/images/container.jpg");
 
-    if (textureData)
-    {
-        glTexImage2D(
-            GL_TEXTURE_2D,
-            0,
-            GL_RGB,
-            width,
-            height,
-            0,
-            GL_RGB,
-            GL_UNSIGNED_BYTE,
-            textureData);
-
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else
-    {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-
-
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-
-    stbi_image_free(textureData);
 
     glm::mat4 mtxTransform{m_rotation_angle};
 
@@ -127,18 +97,12 @@ int main()
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
-    // io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // IF using Docking Branch
 
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init();
-    float fov       = 90.0f;
-    float nearPlane = 0.1f, farPlane = 1000.0f;
-    // const glm::mat4 mtxProjection(
-    //     glm::perspective(glm::radians(fov),
-    //                      static_cast<float>(wWidth) / static_cast<float>(wHeight),
-    //                      nearPlane, farPlane)
-    // );
 
+    float               fov       = 30.0f;
+    float               nearPlane = 0.1f, farPlane = 1000.0f;
     constexpr glm::vec3 camPosition{2.0f, 2.0f, 2.0f};
     constexpr glm::vec3 cameraLookAt{0.0f, 0.0f, 0.0f};
     constexpr glm::vec3 cameraUp{0.0f, 1.0f, 0.0f};
@@ -147,6 +111,8 @@ int main()
 
     while (!glfwWindowShouldClose(window))
     {
+        glClearColor(0.3f, 0.2f, 0.5f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
 
@@ -163,10 +129,9 @@ int main()
             ImGui::Text(item.c_str());
         }
 
-        glClearColor(0.3f, 0.2f, 0.5f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         m_Shader.Use();
-        glBindTexture(GL_TEXTURE_2D, Texture);
+        m_Scene.GetTextureManager()->ActivateTexture(GL_TEXTURE0, Texture);
         mesh->Draw();
         glm::mat4 mtxRotation = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(1.0f, 0.0f, 1.0f));
 
@@ -174,6 +139,7 @@ int main()
                                                    static_cast<float>(wWidth) / static_cast<float>(wHeight), nearPlane,
                                                    farPlane);
         mtxTransform = mtxProjection * mtxCamera * mtxRotation;
+        angle += 0.1f;
         m_Shader.setMat4("uMtxTransform", &mtxTransform);
 
         ImGui::Render();
@@ -184,7 +150,6 @@ int main()
     }
 
     delete mesh;
-    delete mesh_manager;
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
