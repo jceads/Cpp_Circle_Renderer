@@ -1,5 +1,6 @@
 C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\include\glm\detail\glm.cpp;C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\x64\Debug\glm.obj
 C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\src\Application.cpp;C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\x64\Debug\Application.obj
+C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\src\Camera.cpp;C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\x64\Debug\Camera.obj
 C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\src\imgui\imgui.cpp;C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\x64\Debug\imgui.obj
 C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\src\imgui\imgui_demo.cpp;C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\x64\Debug\imgui_demo.obj
 C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\src\imgui\imgui_draw.cpp;C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\x64\Debug\imgui_draw.obj
@@ -9,5 +10,11 @@ C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\src\imgui\imgui_tables.cpp;
 C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\src\imgui\imgui_widgets.cpp;C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\x64\Debug\imgui_widgets.obj
 C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\src\Mesh.cpp;C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\x64\Debug\Mesh.obj
 C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\src\MeshManager.cpp;C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\x64\Debug\MeshManager.obj
+C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\src\SceneObject.cpp;C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\x64\Debug\SceneObject.obj
+C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\src\Scene.cpp;C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\x64\Debug\Scene.obj
 C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\src\Shader.cpp;C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\x64\Debug\Shader.obj
+C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\src\Texture.cpp;C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\x64\Debug\Texture.obj
+C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\src\Utils\IDisposable.cpp;C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\x64\Debug\IDisposable.obj
+C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\src\VAOManager.cpp;C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\x64\Debug\VAOManager.obj
 C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\src\VertexArrayObject.cpp;C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\x64\Debug\VertexArrayObject.obj
+C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\src\WindowManager.cpp;C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\x64\Debug\WindowManager.obj
