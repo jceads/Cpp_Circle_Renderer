@@ -16,9 +16,14 @@ namespace OpenGL
         std::vector<Mesh>            Meshes;
         std::string                  Directory;
         bool                         gammCorrection;
+        glm::vec3                    position;
+        glm::vec3                    scale;
+        std::string name;
 
         Model(const std::string& path, bool gamma);
+        Model(const std::string& path);
         void    Draw(Camera* camera);
+        void    InitShader(const std::string& vPath, const std::string& fPath);
         Shader* shader;
 
     private:

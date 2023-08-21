@@ -55,7 +55,9 @@ void OpenGL::WindowManager::KeyCallBack(GLFWwindow* window, int key, int scancod
 
 void OpenGL::WindowManager::FrameBufferSizeCallBack(GLFWwindow* window, int width, int height)
 {
-    GlCall(glViewport(0, 0, width, height))
+    m_height = height;
+    m_width  = width;
+    GlCall(glViewport(0, 0, m_width, m_height))
     GlCall(glfwSetWindowSize(window, width, height))
 }
 
@@ -64,9 +66,6 @@ void OpenGL::WindowManager::GlfwError(int id, const char* description)
     std::cout << description << std::endl;
 }
 
-void OpenGL::WindowManager::ScrollCallBack(GLFWwindow* window, double xpos, double ypos)
-{
-}
 
 void OpenGL::WindowManager::ClearColor() const
 {
@@ -85,6 +84,8 @@ void OpenGL::WindowManager::LoopEndFuncs() const
 
 OpenGL::WindowManager::WindowManager()
 {
+    m_width  = 1000;
+    m_height = 1000;
     glfwSetErrorCallback(GlfwError);
     if (!glfwInit())
     {
@@ -92,7 +93,7 @@ OpenGL::WindowManager::WindowManager()
         exit(-1);
     }
 
-    m_window = glfwCreateWindow(1000, 1000, "Opengl Renderer", nullptr, nullptr);
+    m_window = glfwCreateWindow(m_width, m_height, "Opengl Renderer", nullptr, nullptr);
     if (!m_window)
     {
         glfwTerminate();
@@ -103,9 +104,9 @@ OpenGL::WindowManager::WindowManager()
     glfwMakeContextCurrent(m_window);
     glfwSetDropCallback(m_window, DragAndDropCallBack);
     glfwSetKeyCallback(m_window, KeyCallBack);
-    glfwSetScrollCallback(m_window, ScrollCallBack);
     glfwSetFramebufferSizeCallback(m_window, FrameBufferSizeCallBack);
     glfwSwapInterval(m_swapInterval);
+
     // stbi_set_flip_vertically_on_load(true);
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -128,19 +129,21 @@ OpenGL::WindowManager::WindowManager()
     m_scene = new Scene();
 }
 
+OpenGL::WindowManager::~WindowManager()
+{
+    WindowManager::Dispose();
+}
+
 void OpenGL::WindowManager::Run()
 {
     while (!glfwWindowShouldClose(m_window))
     {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
-
         ImGui::NewFrame();
         ImGui::ShowDemoWindow();
         ClearColor();
-        // GlClearError();
         m_scene->Draw();
-        // GlLogCall();
         LoopEndFuncs();
     }
 }
@@ -148,6 +151,6 @@ void OpenGL::WindowManager::Run()
 void OpenGL::WindowManager::Dispose()
 {
     IDisposable::Dispose();
-    delete m_scene;
+    // delete m_scene;
     glfwTerminate();
 }

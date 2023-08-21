@@ -166,9 +166,11 @@
         <ClCompile Include="src\imgui\imgui_impl_opengl3.cpp"/>
         <ClCompile Include="src\imgui\imgui_tables.cpp"/>
         <ClCompile Include="src\imgui\imgui_widgets.cpp"/>
+        <ClCompile Include="src\Light.cpp"/>
         <ClCompile Include="src\Mesh.cpp"/>
         <ClCompile Include="src\Model.cpp"/>
         <ClCompile Include="src\Scene.cpp"/>
+        <ClCompile Include="src\Renderable.cpp"/>
         <ClCompile Include="src\Shader.cpp"/>
         <ClCompile Include="src\Utils\IDisposable.cpp"/>
         <ClCompile Include="src\VertexArrayObject.cpp"/>
@@ -565,9 +567,11 @@
         <ClInclude Include="src\imgui\imstb_rectpack.h"/>
         <ClInclude Include="src\imgui\imstb_textedit.h"/>
         <ClInclude Include="src\imgui\imstb_truetype.h"/>
+        <ClInclude Include="src\Light.h"/>
         <ClInclude Include="src\Mesh.h"/>
         <ClInclude Include="src\Model.h"/>
         <ClInclude Include="src\Scene.h"/>
+        <ClInclude Include="src\Renderable.h"/>
         <ClInclude Include="src\Shader.h"/>
         <ClInclude Include="src\Utils\IDisposable.h"/>
         <ClInclude Include="src\Vertex.h"/>
@@ -578,10 +582,14 @@
         <Content Include="data\ico_sphere.fbx"/>
         <Content Include="data\images\container.jpg"/>
         <Content Include="data\images\wood1.jpg"/>
+        <Content Include="data\little_cube.fbx"/>
+        <Content Include="data\shaders\FLight.glsl"/>
         <Content Include="data\shaders\fragment.glsl"/>
         <Content Include="data\shaders\vertex.glsl"/>
+        <Content Include="data\shaders\VLight.glsl"/>
         <Content Include="include\assimp\.editorconfig"/>
         <Content Include="include\assimp\config.h.in"/>
+        <Content Include="little_cube.fbx"/>
         <Content Include="src\assimp-vc143-mt.dll"/>
     </ItemGroup>
     <ItemGroup>

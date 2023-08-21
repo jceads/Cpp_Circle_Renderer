@@ -5,6 +5,7 @@
 #include <sstream>
 
 #include "GL/glew.h"
+#include "imgui/imgui.h"
 
 #ifndef GLGuard
 #define GLGuard
@@ -39,6 +40,13 @@ static bool GlLogCall(const char* func, const char* file, int line)
 OpenGL::Shader::Shader(const char* vertexPath, const char* fragmentPath)
 {
     // 1. retrieve the vertex/fragment source code from filePath
+    R = 1.0f;
+    G = 0.5f;
+    B = 0.31f;
+
+    LR = 1.0f;
+    LG = 1.0f;
+    LB = 1.0f;
     std::string   vertexCode;
     std::string   fragmentCode;
     std::ifstream vShaderFile;
@@ -96,11 +104,15 @@ OpenGL::Shader::~Shader()
 }
 
 
-void OpenGL::Shader::Use() const
+void OpenGL::Shader::Use()
 {
     GlCall(glUseProgram(ID);)
-    setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-    setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+    // ImGui::Begin("Mesh color");
+    // ImGui::DragFloat("Color R", &R, 0.001f, 0, 1.0f);
+    // ImGui::DragFloat("Light R", &LR, 0.001f, 0, 1.0f);
+    // setVec3("objectColor", R, G, B);
+    // setVec3("lightColor", LR, 1.0f, 1.0f);
+    // ImGui::End();
 }
 
 

@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
+#include "imgui/imgui.h"
 #include "stb/stb_image.h"
 
 #ifndef GLGuard
@@ -40,26 +41,52 @@ static bool GlLogCall(const char* func, const char* file, int line)
  */
 OpenGL::Model::Model(const std::string& path, bool gamma = false) : gammCorrection(gamma)
 {
-    shader = new Shader("./data/shaders/vertex.glsl", "./data/shaders/fragment.glsl");
+    // shader = new Shader("./data/shaders/vertex.glsl", "./data/shaders/fragment.glsl");
+    LoadModel(path);
+    position = glm::vec3{1.0f};
+    scale    = glm::vec3{1.0f};
+}
+
+OpenGL::Model::Model(const std::string& path)
+{
+    gammCorrection = false;
+    position       = glm::vec3{1.0f};
+    scale          = glm::vec3{1.0f};
     LoadModel(path);
 }
 
 void OpenGL::Model::Draw(Camera* camera)
 {
+    glm::mat4   projection = glm::perspective(glm::radians(camera->Zoom), (float)1000 / (float)1000, 0.1f, 100.0f);
+    glm::mat4   view       = camera->GetViewMatrix();
+    glm::mat4   model      = glm::mat4(1.0f);
+    std::string table_name = "Mesh Pos " + name;
+    ImGui::Begin(table_name.c_str());
+    ImGui::DragFloat3("pos", &this->position.x, 0.01f, -10.0f, 10.0f);
+    ImGui::DragFloat3("Scale", &this->scale.x, 0.01f, -10.0f, 10.0f);
+    ImGui::End();
+
     for (unsigned int i = 0; i < Meshes.size(); ++i)
     {
         shader->Use();
-        glm::mat4 projection = glm::perspective(glm::radians(camera->Zoom), (float)1000 / (float)1000, 0.1f, 100.0f);
-        glm::mat4 view       = camera->GetViewMatrix();
         shader->setMat4("projection", projection);
         shader->setMat4("view", view);
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f)); // it's a bit too big for our scene, so scale it down
+        model = glm::translate(model, position);
+        model = glm::scale(model, scale); // it's a bit too big for our scene, so scale it down
         shader->setMat4("model", model);
 
         Meshes[i].Draw(*shader);
+
+        shader->setVec3("objectColor", 1.0f, 0.5f, 0.31f);
+        shader->setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+        shader->setVec3("lightPos", position + glm::vec3{2});
     }
+    // ImGui::End();
+}
+
+void OpenGL::Model::InitShader(const std::string& vPath, const std::string& fPath)
+{
+    shader = new Shader(vPath.c_str(), fPath.c_str());
 }
 
 void OpenGL::Model::LoadModel(std::string path)
@@ -73,6 +100,7 @@ void OpenGL::Model::LoadModel(std::string path)
         return;
     }
     Directory = path.substr(0, path.find_last_of('/'));
+    name      = scene->mMeshes[0]->mName.C_Str();
     ProcessNode(scene->mRootNode, scene);
 }
 
