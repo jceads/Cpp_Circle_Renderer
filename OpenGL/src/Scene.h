@@ -1,7 +1,6 @@
 ﻿#pragma once
-#include "MeshManager.h"
-#include "SceneObject.h"
-#include "Texture.h"
+#include "Camera.h"
+#include "Model.h"
 
 namespace OpenGL
 {
@@ -13,22 +12,8 @@ namespace OpenGL
         void Draw();
 
     private:
-        std::vector<SceneObject> m_sceneObjects;
-        void                     AddCube();
+        std::vector<Model*> m_SceneMeshes;
+        Camera              m_camera;
+        void                AddCube();
     };
-
-    // class Scene
-    // {
-    // public:
-    //     Scene();
-    //     ~Scene();
-    //     MeshManager* GetMeshManager() const;
-    //     Texture*     GetTextureManager() const;
-    //     VAOManager*  GetVaoManager() const;
-    //
-    // private:
-    //     MeshManager* m_MeshManager;
-    //     Texture*     m_TextureManager;
-    //     VAOManager*  m_VaoManager;
-    // };
 }

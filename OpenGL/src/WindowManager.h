@@ -2,6 +2,7 @@
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 #include "Utils/IDisposable.h"
+#include "Scene.h"
 
 namespace OpenGL
 {
@@ -22,6 +23,7 @@ namespace OpenGL
         static void KeyCallBack(GLFWwindow* window, int key, int scancode, int action, int mods);
         static void FrameBufferSizeCallBack(GLFWwindow* window, int width, int height);
         static void GlfwError(int id, const char* description);
+        static void ScrollCallBack(GLFWwindow* window, double xpos, double ypos);
         void        ClearColor() const;
         void        LoopEndFuncs() const;
         GLFWwindow* m_window;

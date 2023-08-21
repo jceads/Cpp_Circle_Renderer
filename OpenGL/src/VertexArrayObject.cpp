@@ -1,68 +1,87 @@
 ﻿#include "VertexArrayObject.h"
 
+#include <iostream>
+
 #include "GL/glew.h"
 #include "glm/glm.hpp"
 
+
+#ifndef GLGuard
+#define GLGuard
+
+#define ASSERT(x) if (!(x)) __debugbreak();
+#define GlCall(x) GlClearError();\
+    x;\
+    ASSERT(GlLogCall(#x, __FILE__,__LINE__))
+
+static void GlClearError()
+{
+    while (glGetError() != GL_NO_ERROR);
+}
+
+static bool GlLogCall(const char* func, const char* file, int line)
+{
+    while (GLenum error = glGetError())
+    {
+        std::cout << "[Opengl Error] (" << error << ") " << func << " " << file << " " << line << std::endl;
+        return false;
+    }
+    return true;
+}
+#endif
+
+
 OpenGL::VertexArrayObject::VertexArrayObject()
 {
-    m_VaoId = 0;
-    m_VboId = 0;
-    m_VibId = 0;
+    VAO = 0;
+    VBO = 0;
+    EBO = 0;
 }
 
 OpenGL::VertexArrayObject::~VertexArrayObject()
 {
-    if (m_VaoId)
-        glDeleteVertexArrays(1, &m_VaoId);
-    if (m_VibId)
-        glDeleteBuffers(1, &m_VibId);
-    if (m_VboId)
-        glDeleteBuffers(1, &m_VboId);
+    if (VAO)
+        glDeleteVertexArrays(1, &VAO);
+    if (EBO)
+        glDeleteBuffers(1, &EBO);
+    if (VBO)
+        glDeleteBuffers(1, &VBO);
 }
 
 void OpenGL::VertexArrayObject::Build(const std::vector<Vertex>& vertices, const std::vector<unsigned>& indices)
 {
-    glGenVertexArrays(1, &m_VaoId);
+    GlCall(glGenVertexArrays(1, &VAO))
 
-    glGenBuffers(1, &m_VboId);
+    GlCall(glGenBuffers(1, &VBO));
 
-    glGenBuffers(1, &m_VibId);
+    GlCall(glGenBuffers(1, &EBO));
 
-    glBindVertexArray(m_VaoId);
+    GlCall(glBindVertexArray(VAO));
 
 
-    glBindBuffer(GL_ARRAY_BUFFER, m_VboId);
+    GlCall(glBindBuffer(GL_ARRAY_BUFFER, VBO));
 
-    glBufferData(GL_ARRAY_BUFFER, sizeof(OpenGL::Vertex) * vertices.size(), vertices.data(),GL_STATIC_DRAW);
+    GlCall(glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(OpenGL::Vertex), vertices.data(),GL_STATIC_DRAW));
+    GlCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO));
+    GlCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(),GL_STATIC_DRAW));
 
-    glVertexAttribPointer(0, 3,GL_FLOAT,GL_FALSE, 9 * sizeof(float), static_cast<void*>(0));
+    GlCall(glEnableVertexAttribArray(0));
+    GlCall(glVertexAttribPointer(0, 3,GL_FLOAT,GL_FALSE, sizeof(Vertex), static_cast<void*>(0)));
 
-    glVertexAttribPointer(1, 4,GL_FLOAT,GL_FALSE, 9 * sizeof(float), (void*)(sizeof(float) * 3));
+    GlCall(glEnableVertexAttribArray(1));
+    GlCall(glVertexAttribPointer(1, 3,GL_FLOAT,GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal)));
 
-    glVertexAttribPointer(2, 2,GL_FLOAT,GL_FALSE, 9 * sizeof(float), (void*)(sizeof(float) * 7));
+    GlCall(glEnableVertexAttribArray(2));
+    GlCall(glVertexAttribPointer(2, 2,GL_FLOAT,GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords)));
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_VibId);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indices.size(), indices.data(),GL_STATIC_DRAW);
+    GlCall(glEnableVertexAttribArray(3));
+    GlCall(glVertexAttribPointer(3, 3,GL_FLOAT,GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Tangent)));
 
-    m_AttributeList.push_back(0);
-    m_AttributeList.push_back(1);
-    m_AttributeList.push_back(2);
+    GlCall(glEnableVertexAttribArray(4));
+    GlCall(glVertexAttribPointer(4, 3,GL_FLOAT,GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, BiTangent)));
+    GlCall(glBindVertexArray(0));
     m_vertexCount = vertices.size();
     m_IndexCount  = indices.size();
-}
-
-void OpenGL::VertexArrayObject::Activate() const
-{
-    glBindVertexArray(m_VaoId);
-    for (auto& next : m_AttributeList)
-    {
-        glEnableVertexAttribArray(next);
-    }
-}
-
-void OpenGL::VertexArrayObject::DeActivate()
-{
-    glBindVertexArray(0);
 }
 
 int OpenGL::VertexArrayObject::GetIndexCount() const

@@ -1,22 +1,48 @@
 ﻿#pragma once
+#include "glm/fwd.hpp"
 #include "glm/vec3.hpp"
 
-class Camera
+
+namespace OpenGL
 {
-public:
-    Camera(float     fov       = 30.0f,
-           float     nearPlane = 0.1f,
-           float     farPlane  = 1000.0f,
-           glm::vec3 position  = glm::vec3{0.0f, 0.0f, 0.0f},
-           glm::vec3 lookAt    = glm::vec3{0.0f, 0.0f, 1.0f});
-    float fov,
-          nearPlane
-          , farPlane;
+    class Camera
+    {
+        enum class CameraMovement
+        {
+            FORWARD,
+            BACKWARD,
+            LEFT,
+            RIGHT,
+        };
 
-    void ChangePosition(glm::vec3 newPosition);
+    public:
+        Camera(glm::vec3 pos = glm::vec3(0.0f, 0.0f, 5.0f),
+               glm::vec3 up  = glm::vec3(0.0f, 1.0f, 0.0f),
+               float     yaw = -90.0f, float pitch = 0.0f);
+        glm::mat4 GetViewMatrix();
+        void      ProcessKeyboard(CameraMovement direction, float deltaTime);
+        void      ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch = true);
+        void      ProcessMouseScroll(float yOffset);
 
+        float fov,
+              nearPlane,
+              farPlane;
+        glm::vec3 Position;
+        glm::vec3 Front;
+        glm::vec3 Up;
+        glm::vec3 Right;
+        glm::vec3 WorldUp;
 
-    glm::vec3 position;
-    glm::vec3 lookAt;
-    glm::vec3 up;
-};
+        float Yaw,
+              Pitch;
+
+        float MovementSpeed,
+              MouseSensitivity,
+              Zoom;
+
+        void ChangePosition(glm::vec3 newPosition);
+
+    private:
+        void updateCameraVectors();
+    };
+}

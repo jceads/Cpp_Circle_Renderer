@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include <vector>
-
 #include "Vertex.h"
 
 
@@ -11,19 +10,15 @@ namespace OpenGL
     public:
         VertexArrayObject();
         ~VertexArrayObject();
-        void Build(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices);
-        void Activate() const;
-        void DeActivate();
-        int  GetIndexCount() const;
-        int  GetVertexCount() const;
+        unsigned int VAO;
+        void         Build(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices);
+        int          GetIndexCount() const;
+        int          GetVertexCount() const;
 
     private:
-        unsigned int m_VaoId;
-        unsigned int m_VboId;
-        unsigned int m_VibId;
-        uint32_t     m_IndexCount;
-        uint32_t     m_vertexCount;
-
-        std::vector<unsigned int> m_AttributeList;
+        unsigned int VBO;
+        unsigned int EBO;
+        long int     m_IndexCount;
+        long int     m_vertexCount;
     };
 }
