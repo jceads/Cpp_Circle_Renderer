@@ -34,6 +34,11 @@ static bool GlLogCall(const char* func, const char* file, int line)
 #endif
 
 
+void OpenGL::Model::addAttrib3(const std::string& name, const glm::vec3& value)
+{
+    this->m_Attribs3[name] = value;
+}
+
 /**
  * \brief 
  * \param path Model loading path ex: C:/etc/..
@@ -43,15 +48,20 @@ OpenGL::Model::Model(const std::string& path, bool gamma = false) : gammCorrecti
 {
     // shader = new Shader("./data/shaders/vertex.glsl", "./data/shaders/fragment.glsl");
     LoadModel(path);
-    position = glm::vec3{1.0f};
-    scale    = glm::vec3{1.0f};
+    // objectColor = glm::vec3{1.0f};
+    // position    = glm::vec3{1.0f};
+    // scale       = glm::vec3{1.0f};
 }
 
 OpenGL::Model::Model(const std::string& path)
 {
     gammCorrection = false;
-    position       = glm::vec3{1.0f};
-    scale          = glm::vec3{1.0f};
+    transform      = Transform{
+        glm::vec3{0.0f, 0.0f, 0.0f}, glm::vec3{1.0f}, glm::vec3{1.0f}
+
+    };
+    color = Color{1.0f};
+
     LoadModel(path);
 }
 
@@ -60,10 +70,13 @@ void OpenGL::Model::Draw(Camera* camera)
     glm::mat4   projection = glm::perspective(glm::radians(camera->Zoom), (float)1000 / (float)1000, 0.1f, 100.0f);
     glm::mat4   view       = camera->GetViewMatrix();
     glm::mat4   model      = glm::mat4(1.0f);
-    std::string table_name = "Mesh Pos " + name;
+    std::string table_name = "Mesh: " + name;
     ImGui::Begin(table_name.c_str());
-    ImGui::DragFloat3("pos", &this->position.x, 0.01f, -10.0f, 10.0f);
-    ImGui::DragFloat3("Scale", &this->scale.x, 0.01f, -10.0f, 10.0f);
+
+    ImGui::DragFloat3("Position", &this->transform.position.x, 0.01f, -10.0f, 10.0f);
+    ImGui::DragFloat3("Scale", &this->transform.scale.x, 0.01f, 0.0f, 10.0f);
+    ImGui::DragFloat4("Object Color", &this->color.r, 0.01f, 0.0f, 1.0f);
+
     ImGui::End();
 
     for (unsigned int i = 0; i < Meshes.size(); ++i)
@@ -71,15 +84,24 @@ void OpenGL::Model::Draw(Camera* camera)
         shader->Use();
         shader->setMat4("projection", projection);
         shader->setMat4("view", view);
-        model = glm::translate(model, position);
-        model = glm::scale(model, scale); // it's a bit too big for our scene, so scale it down
+        model = glm::translate(model, transform.position);
+        model = glm::scale(model, transform.scale); // it's a bit too big for our scene, so scale it down
         shader->setMat4("model", model);
+
+        ImGui::Begin("Attributes");
+        for (auto& [key,value] : m_Attribs3)
+        {
+            ImGui::DragFloat3(key.c_str(), &value.x, 0.01f, -1.0f, 1.0f);
+            shader->setVec3(key, value);
+        }
+        ImGui::End();
+
 
         Meshes[i].Draw(*shader);
 
-        shader->setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-        shader->setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-        shader->setVec3("lightPos", position + glm::vec3{2});
+        // shader->setVec3("objectColor", this->color.r, this->color.g, this->color.b);
+        // shader->setVec3("lightColor", glm::vec3{1.0f});
+        // shader->setVec3("lightPos", this->transform.position + glm::vec3{2});
     }
     // ImGui::End();
 }

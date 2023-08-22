@@ -30,12 +30,6 @@ void OpenGL::Scene::Draw()
         ImGui::DragFloat("z", &m_Camera.Position.z, 0.01f);
         for (int i = 0; i < m_SceneMeshes.size(); i++)
             m_SceneMeshes[i]->Draw(&m_Camera);
-
-        // for (const auto& element : m_SceneMeshes)
-        // {
-        //     // ImGui::SliderFloat3("Camera Position", *cam_pos, -20, 20);
-        //     element->Draw(&m_camera);
-        // }
     }
 }
 
@@ -50,17 +44,26 @@ void OpenGL::Scene::Dispose()
 
 void OpenGL::Scene::AddSampleMesh()
 {
-    std::string path{"./data/ico_sphere.fbx"};
-    auto const& model = new Model(path);
+    const std::string path{"./data/ico_sphere.fbx"};
+    auto const&       model = new Model(path);
     model->InitShader("./data/shaders/vertex.glsl", "./data/shaders/fragment.glsl");
+    model->addAttrib3("objectColor",
+                      glm::vec3{model->color.r, model->color.g, model->color.b});
+    model->addAttrib3("lightColor", glm::vec3{1.0f, 1.0f, 1.0f});
+    model->addAttrib3("lightPost", glm::vec3{1.2f, 1.0f, 2.0f});
+    model->addAttrib3("viewPos", m_Camera.Position);
+
     m_SceneMeshes.push_back(model);
 }
 
 void OpenGL::Scene::AddLightSource()
 {
-    std::string path{"./data/little_cube.fbx"};
-    auto const& model = new Model(path);
+    const std::string path{"./data/little_cube.fbx"};
+    auto const&       model = new Model(path);
     model->InitShader("./data/shaders/VLight.glsl", "./data/shaders/FLight.glsl");
-    model->position = glm::vec3{2.0f};
+    model->transform = OpenGL::Transform{
+        glm::vec3{1.0f, 2.0f, 1.0f}, glm::vec3{1.0f}, glm::vec3{1.0f}
+    };
+    model->color = Color{0.5f};
     m_SceneMeshes.push_back(model);
 }

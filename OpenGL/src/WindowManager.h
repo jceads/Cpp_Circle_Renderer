@@ -8,6 +8,11 @@ namespace OpenGL
 {
     class Scene;
 
+    struct WindowProperties
+    {
+        int width, height;
+    };
+
     class WindowManager : public IDisposable
     {
     public:
@@ -15,6 +20,7 @@ namespace OpenGL
         ~WindowManager();
         void              Run();
         void              Dispose() override;
+        WindowProperties  window_properties;
         inline static int m_width;
         inline static int m_height;
 
