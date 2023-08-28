@@ -1,15 +1,17 @@
 ﻿#include "Camera.h"
 
+#include "WindowManager.h"
+#include "GLFW/glfw3.h"
 #include "glm/ext/matrix_transform.hpp"
 
 OpenGL::Camera::Camera(glm::vec3 pos, glm::vec3 up, float yaw, float pitch)
     : Position(pos),
-      Front(glm::vec3(0.0f, 0.0f, -1.0f)), Up(up),
+      Front(glm::vec3(0.0f, 0.0f, -1.0f)), Up(up), fov(30),
       Yaw(yaw), Pitch(pitch), MovementSpeed(2.5f), MouseSensitivity(0.1f), Zoom(45.0f)
 {
 }
 
-glm::mat4 OpenGL::Camera::GetViewMatrix()
+glm::mat4 OpenGL::Camera::GetViewMatrix() const
 {
     return glm::lookAt(Position, Position + Front, Up);
 }

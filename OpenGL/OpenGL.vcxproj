@@ -87,7 +87,7 @@
         <ClCompile>
             <WarningLevel>Level3</WarningLevel>
             <SDLCheck>true</SDLCheck>
-            <PreprocessorDefinitions>GLEW_STATIC;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>GLEW_STATIC;DEBUG;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
             <ConformanceMode>true</ConformanceMode>
             <AdditionalIncludeDirectories>C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\include;$(SolutionDir)Dependencies\include\glm;$(SolutionDir)Dependencies\include;</AdditionalIncludeDirectories>
             <LanguageStandard>stdcpp17</LanguageStandard>
@@ -123,7 +123,7 @@
         <ClCompile>
             <WarningLevel>Level3</WarningLevel>
             <SDLCheck>true</SDLCheck>
-            <PreprocessorDefinitions>GLEW_STATIC;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>GLEW_STATIC;DEBUG;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
             <ConformanceMode>true</ConformanceMode>
             <AdditionalIncludeDirectories>C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\include;$(SolutionDir)OpenGL/Dependencies/include</AdditionalIncludeDirectories>
             <LanguageStandard>stdcpp17</LanguageStandard>
@@ -157,23 +157,243 @@
     </ItemDefinitionGroup>
     <ItemGroup>
         <ClCompile Include="include\glm\detail\glm.cpp"/>
+        <ClCompile Include="include\imgui\imgui.cpp"/>
+        <ClCompile Include="include\imgui\imgui_demo.cpp"/>
+        <ClCompile Include="include\imgui\imgui_draw.cpp"/>
+        <ClCompile Include="include\imgui\imgui_impl_glfw.cpp"/>
+        <ClCompile Include="include\imgui\imgui_impl_opengl3.cpp"/>
+        <ClCompile Include="include\imgui\imgui_tables.cpp"/>
+        <ClCompile Include="include\imgui\imgui_widgets.cpp"/>
         <ClCompile Include="src\Application.cpp"/>
         <ClCompile Include="src\Camera.cpp"/>
-        <ClCompile Include="src\imgui\imgui.cpp"/>
-        <ClCompile Include="src\imgui\imgui_demo.cpp"/>
-        <ClCompile Include="src\imgui\imgui_draw.cpp"/>
-        <ClCompile Include="src\imgui\imgui_impl_glfw.cpp"/>
-        <ClCompile Include="src\imgui\imgui_impl_opengl3.cpp"/>
-        <ClCompile Include="src\imgui\imgui_tables.cpp"/>
-        <ClCompile Include="src\imgui\imgui_widgets.cpp"/>
-        <ClCompile Include="src\Light.cpp"/>
-        <ClCompile Include="src\Mesh.cpp"/>
-        <ClCompile Include="src\Model.cpp"/>
+        <ClCompile Include="src\KeyInputManager.cpp"/>
+        <ClCompile Include="src\Mesh\Mesh.cpp">
+            <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
+            <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+            <Optimization>Disabled</Optimization>
+            <SupportJustMyCode>true</SupportJustMyCode>
+            <AssemblerOutput>NoListing</AssemblerOutput>
+            <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
+            <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+            <BrowseInformation>false</BrowseInformation>
+            <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
+            <CompileAs>Default</CompileAs>
+            <ConformanceMode>true</ConformanceMode>
+            <DiagnosticsFormat>Column</DiagnosticsFormat>
+            <DisableLanguageExtensions>false</DisableLanguageExtensions>
+            <ErrorReporting>Prompt</ErrorReporting>
+            <ExpandAttributedSource>false</ExpandAttributedSource>
+            <ExceptionHandling>Sync</ExceptionHandling>
+            <EnableASAN>false</EnableASAN>
+            <EnableFuzzer>false</EnableFuzzer>
+            <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+            <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+            <FloatingPointModel>Precise</FloatingPointModel>
+            <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+            <GenerateModuleDependencies>false</GenerateModuleDependencies>
+            <GenerateSourceDependencies>false</GenerateSourceDependencies>
+            <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+            <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+            <IntrinsicFunctions>false</IntrinsicFunctions>
+            <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+            <LanguageStandard>stdcpp17</LanguageStandard>
+            <LanguageStandard_C>Default</LanguageStandard_C>
+            <MinimalRebuild>false</MinimalRebuild>
+            <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
+            <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
+            <OmitDefaultLibName>false</OmitDefaultLibName>
+            <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+            <WholeProgramOptimization>false</WholeProgramOptimization>
+            <ObjectFileName>x64\Debug\</ObjectFileName>
+            <CallingConvention>Cdecl</CallingConvention>
+            <ProgramDataBaseFileName>x64\Debug\vc143.pdb</ProgramDataBaseFileName>
+            <PrecompiledHeader>NotUsing</PrecompiledHeader>
+            <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+            <PrecompiledHeaderOutputFile>x64\Debug\OpenGL.pch</PrecompiledHeaderOutputFile>
+            <PreprocessToFile>false</PreprocessToFile>
+            <PreprocessKeepComments>false</PreprocessKeepComments>
+            <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+            <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+            <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+            <ShowIncludes>false</ShowIncludes>
+            <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
+            <SuppressStartupBanner>true</SuppressStartupBanner>
+            <BufferSecurityCheck>true</BufferSecurityCheck>
+            <SmallerTypeCheck>false</SmallerTypeCheck>
+            <SpectreMitigation>false</SpectreMitigation>
+            <StructMemberAlignment>Default</StructMemberAlignment>
+            <TrackerLogDirectory>x64\Debug\OpenGL.tlog\</TrackerLogDirectory>
+            <TranslateIncludes>false</TranslateIncludes>
+            <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+            <TreatWarningAsError>false</TreatWarningAsError>
+            <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+            <UseFullPaths>true</UseFullPaths>
+            <WarningLevel>Level3</WarningLevel>
+            <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
+            <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+            <IntelJCCErratum>false</IntelJCCErratum>
+            <BuildStlModules>false</BuildStlModules>
+            <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
+            <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
+            <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
+            <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
+            <PreprocessorDefinitions>GLEW_STATIC;DEBUG;_DEBUG;_CONSOLE;_UNICODE;UNICODE;</PreprocessorDefinitions>
+            <SDLCheck>true</SDLCheck>
+            <AdditionalIncludeDirectories>C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\include;C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL/Dependencies/include;C:\dev\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
+            <LinkCompiled>true</LinkCompiled>
+        </ClCompile>
+        <ClCompile Include="src\Mesh\Model.cpp">
+            <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
+            <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+            <Optimization>Disabled</Optimization>
+            <SupportJustMyCode>true</SupportJustMyCode>
+            <AssemblerOutput>NoListing</AssemblerOutput>
+            <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
+            <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+            <BrowseInformation>false</BrowseInformation>
+            <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
+            <CompileAs>Default</CompileAs>
+            <ConformanceMode>true</ConformanceMode>
+            <DiagnosticsFormat>Column</DiagnosticsFormat>
+            <DisableLanguageExtensions>false</DisableLanguageExtensions>
+            <ErrorReporting>Prompt</ErrorReporting>
+            <ExpandAttributedSource>false</ExpandAttributedSource>
+            <ExceptionHandling>Sync</ExceptionHandling>
+            <EnableASAN>false</EnableASAN>
+            <EnableFuzzer>false</EnableFuzzer>
+            <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+            <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+            <FloatingPointModel>Precise</FloatingPointModel>
+            <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+            <GenerateModuleDependencies>false</GenerateModuleDependencies>
+            <GenerateSourceDependencies>false</GenerateSourceDependencies>
+            <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+            <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+            <IntrinsicFunctions>false</IntrinsicFunctions>
+            <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+            <LanguageStandard>stdcpp17</LanguageStandard>
+            <LanguageStandard_C>Default</LanguageStandard_C>
+            <MinimalRebuild>false</MinimalRebuild>
+            <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
+            <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
+            <OmitDefaultLibName>false</OmitDefaultLibName>
+            <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+            <WholeProgramOptimization>false</WholeProgramOptimization>
+            <ObjectFileName>x64\Debug\</ObjectFileName>
+            <CallingConvention>Cdecl</CallingConvention>
+            <ProgramDataBaseFileName>x64\Debug\vc143.pdb</ProgramDataBaseFileName>
+            <PrecompiledHeader>NotUsing</PrecompiledHeader>
+            <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+            <PrecompiledHeaderOutputFile>x64\Debug\OpenGL.pch</PrecompiledHeaderOutputFile>
+            <PreprocessToFile>false</PreprocessToFile>
+            <PreprocessKeepComments>false</PreprocessKeepComments>
+            <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+            <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+            <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+            <ShowIncludes>false</ShowIncludes>
+            <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
+            <SuppressStartupBanner>true</SuppressStartupBanner>
+            <BufferSecurityCheck>true</BufferSecurityCheck>
+            <SmallerTypeCheck>false</SmallerTypeCheck>
+            <SpectreMitigation>false</SpectreMitigation>
+            <StructMemberAlignment>Default</StructMemberAlignment>
+            <TrackerLogDirectory>x64\Debug\OpenGL.tlog\</TrackerLogDirectory>
+            <TranslateIncludes>false</TranslateIncludes>
+            <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+            <TreatWarningAsError>false</TreatWarningAsError>
+            <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+            <UseFullPaths>true</UseFullPaths>
+            <WarningLevel>Level3</WarningLevel>
+            <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
+            <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+            <IntelJCCErratum>false</IntelJCCErratum>
+            <BuildStlModules>false</BuildStlModules>
+            <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
+            <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
+            <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
+            <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
+            <PreprocessorDefinitions>GLEW_STATIC;DEBUG;_DEBUG;_CONSOLE;_UNICODE;UNICODE;</PreprocessorDefinitions>
+            <SDLCheck>true</SDLCheck>
+            <AdditionalIncludeDirectories>C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\include;C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL/Dependencies/include;C:\dev\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
+            <LinkCompiled>true</LinkCompiled>
+        </ClCompile>
+        <ClCompile Include="src\Mesh\Shader.cpp">
+            <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
+            <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+            <Optimization>Disabled</Optimization>
+            <SupportJustMyCode>true</SupportJustMyCode>
+            <AssemblerOutput>NoListing</AssemblerOutput>
+            <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
+            <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+            <BrowseInformation>false</BrowseInformation>
+            <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
+            <CompileAs>Default</CompileAs>
+            <ConformanceMode>true</ConformanceMode>
+            <DiagnosticsFormat>Column</DiagnosticsFormat>
+            <DisableLanguageExtensions>false</DisableLanguageExtensions>
+            <ErrorReporting>Prompt</ErrorReporting>
+            <ExpandAttributedSource>false</ExpandAttributedSource>
+            <ExceptionHandling>Sync</ExceptionHandling>
+            <EnableASAN>false</EnableASAN>
+            <EnableFuzzer>false</EnableFuzzer>
+            <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+            <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+            <FloatingPointModel>Precise</FloatingPointModel>
+            <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+            <GenerateModuleDependencies>false</GenerateModuleDependencies>
+            <GenerateSourceDependencies>false</GenerateSourceDependencies>
+            <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+            <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+            <IntrinsicFunctions>false</IntrinsicFunctions>
+            <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+            <LanguageStandard>stdcpp17</LanguageStandard>
+            <LanguageStandard_C>Default</LanguageStandard_C>
+            <MinimalRebuild>false</MinimalRebuild>
+            <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
+            <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
+            <OmitDefaultLibName>false</OmitDefaultLibName>
+            <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+            <WholeProgramOptimization>false</WholeProgramOptimization>
+            <ObjectFileName>x64\Debug\</ObjectFileName>
+            <CallingConvention>Cdecl</CallingConvention>
+            <ProgramDataBaseFileName>x64\Debug\vc143.pdb</ProgramDataBaseFileName>
+            <PrecompiledHeader>NotUsing</PrecompiledHeader>
+            <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+            <PrecompiledHeaderOutputFile>x64\Debug\OpenGL.pch</PrecompiledHeaderOutputFile>
+            <PreprocessToFile>false</PreprocessToFile>
+            <PreprocessKeepComments>false</PreprocessKeepComments>
+            <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+            <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+            <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+            <ShowIncludes>false</ShowIncludes>
+            <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
+            <SuppressStartupBanner>true</SuppressStartupBanner>
+            <BufferSecurityCheck>true</BufferSecurityCheck>
+            <SmallerTypeCheck>false</SmallerTypeCheck>
+            <SpectreMitigation>false</SpectreMitigation>
+            <StructMemberAlignment>Default</StructMemberAlignment>
+            <TrackerLogDirectory>x64\Debug\OpenGL.tlog\</TrackerLogDirectory>
+            <TranslateIncludes>false</TranslateIncludes>
+            <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+            <TreatWarningAsError>false</TreatWarningAsError>
+            <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+            <UseFullPaths>true</UseFullPaths>
+            <WarningLevel>Level3</WarningLevel>
+            <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
+            <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+            <IntelJCCErratum>false</IntelJCCErratum>
+            <BuildStlModules>false</BuildStlModules>
+            <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
+            <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
+            <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
+            <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
+            <PreprocessorDefinitions>GLEW_STATIC;DEBUG;_DEBUG;_CONSOLE;_UNICODE;UNICODE;</PreprocessorDefinitions>
+            <SDLCheck>true</SDLCheck>
+            <AdditionalIncludeDirectories>C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL\include;C:\Users\jcead\dev\cpp_projects\OpenGL\OpenGL\OpenGL/Dependencies/include;C:\dev\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
+            <LinkCompiled>true</LinkCompiled>
+        </ClCompile>
         <ClCompile Include="src\Scene.cpp"/>
-        <ClCompile Include="src\Renderable.cpp"/>
-        <ClCompile Include="src\Shader.cpp"/>
         <ClCompile Include="src\Utils\IDisposable.cpp"/>
-        <ClCompile Include="src\VertexArrayObject.cpp"/>
         <ClCompile Include="src\WindowManager.cpp"/>
     </ItemGroup>
     <ItemGroup>
@@ -268,6 +488,7 @@
         <ClInclude Include="include\assimp\XmlParser.h"/>
         <ClInclude Include="include\assimp\XMLTools.h"/>
         <ClInclude Include="include\assimp\ZipArchiveIOSystem.h"/>
+        <ClInclude Include="include\Camera.h"/>
         <ClInclude Include="include\GLFW\glfw3.h"/>
         <ClInclude Include="include\GLFW\glfw3native.h"/>
         <ClInclude Include="include\glm\common.hpp"/>
@@ -556,27 +777,30 @@
         <ClInclude Include="include\GL\glew.h"/>
         <ClInclude Include="include\GL\glxew.h"/>
         <ClInclude Include="include\GL\wglew.h"/>
+        <ClInclude Include="include\imgui\imconfig.h"/>
+        <ClInclude Include="include\imgui\imgui.h"/>
+        <ClInclude Include="include\imgui\imgui_impl_glfw.h"/>
+        <ClInclude Include="include\imgui\imgui_impl_opengl3.h"/>
+        <ClInclude Include="include\imgui\imgui_impl_opengl3_loader.h"/>
+        <ClInclude Include="include\imgui\imgui_internal.h"/>
+        <ClInclude Include="include\imgui\imstb_rectpack.h"/>
+        <ClInclude Include="include\imgui\imstb_textedit.h"/>
+        <ClInclude Include="include\imgui\imstb_truetype.h"/>
+        <ClInclude Include="include\InputListener.h"/>
+        <ClInclude Include="include\KeyInputManager.h"/>
+        <ClInclude Include="include\Mesh.h"/>
+        <ClInclude Include="include\Mesh\BufferObjects.h"/>
+        <ClInclude Include="include\Mesh\Color.h"/>
+        <ClInclude Include="include\Mesh\Texture.h"/>
+        <ClInclude Include="include\Mesh\Transform.h"/>
+        <ClInclude Include="include\Mesh\Vertex.h"/>
+        <ClInclude Include="include\Model.h"/>
+        <ClInclude Include="include\Scene.h"/>
+        <ClInclude Include="include\Shader.h"/>
         <ClInclude Include="include\stb\stb_image.h"/>
-        <ClInclude Include="src\Camera.h"/>
-        <ClInclude Include="src\imgui\imconfig.h"/>
-        <ClInclude Include="src\imgui\imgui.h"/>
-        <ClInclude Include="src\imgui\imgui_impl_glfw.h"/>
-        <ClInclude Include="src\imgui\imgui_impl_opengl3.h"/>
-        <ClInclude Include="src\imgui\imgui_impl_opengl3_loader.h"/>
-        <ClInclude Include="src\imgui\imgui_internal.h"/>
-        <ClInclude Include="src\imgui\imstb_rectpack.h"/>
-        <ClInclude Include="src\imgui\imstb_textedit.h"/>
-        <ClInclude Include="src\imgui\imstb_truetype.h"/>
-        <ClInclude Include="src\Light.h"/>
-        <ClInclude Include="src\Mesh.h"/>
-        <ClInclude Include="src\Model.h"/>
-        <ClInclude Include="src\Scene.h"/>
-        <ClInclude Include="src\Renderable.h"/>
-        <ClInclude Include="src\Shader.h"/>
-        <ClInclude Include="src\Utils\IDisposable.h"/>
-        <ClInclude Include="src\Vertex.h"/>
-        <ClInclude Include="src\VertexArrayObject.h"/>
-        <ClInclude Include="src\WindowManager.h"/>
+        <ClInclude Include="include\Utils\IDisposable.h"/>
+        <ClInclude Include="include\WindowManager.h"/>
+        <ClInclude Include="include\WindowProperties.h"/>
     </ItemGroup>
     <ItemGroup>
         <Content Include="data\ico_sphere.fbx"/>
@@ -587,13 +811,11 @@
         <Content Include="data\shaders\fragment.glsl"/>
         <Content Include="data\shaders\vertex.glsl"/>
         <Content Include="data\shaders\VLight.glsl"/>
+        <Content Include="data\torus.fbx"/>
         <Content Include="include\assimp\.editorconfig"/>
         <Content Include="include\assimp\config.h.in"/>
         <Content Include="little_cube.fbx"/>
         <Content Include="src\assimp-vc143-mt.dll"/>
-    </ItemGroup>
-    <ItemGroup>
-        <Folder Include="src\Model\"/>
     </ItemGroup>
     <ItemGroup>
         <None Include="include\glm\detail\func_common.inl"/>
