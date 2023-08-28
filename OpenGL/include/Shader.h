@@ -11,10 +11,8 @@ namespace OpenGL
     public:
         Shader(const char* vertexPath, const char* fragmentPath);
         ~Shader();
-        float    R,  G,  B;
-        float    LR, LG, LB;
         uint32_t ID;
-        void     Use();
+        void     Use() const;
         void     setBool(const std::string& name, bool value) const;
         void     setInt(const std::string& name, int value) const;
         void     setFloat(const std::string& name, float value) const;

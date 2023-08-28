@@ -7,6 +7,6 @@ namespace OpenGL
     public:
         virtual ~IDisposable() = default;
         // virtual      ~IDisposable() = default;
-        virtual void Dispose();
+        virtual void Dispose() = 0;
     };
 }

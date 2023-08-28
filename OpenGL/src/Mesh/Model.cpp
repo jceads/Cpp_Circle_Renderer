@@ -3,7 +3,7 @@
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
 #define STB_IMAGE_IMPLEMENTATION
-#include "Camera.h"
+#include "WindowManager.h"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
 #include "imgui/imgui.h"
@@ -33,10 +33,36 @@ static bool GlLogCall(const char* func, const char* file, int line)
 }
 #endif
 
-
-void OpenGL::Model::addAttrib3(const std::string& name, const glm::vec3& value)
+void OpenGL::Model::AddAttribute3(const std::string& attrib_name, const glm::vec3* attrib)
 {
-    this->m_Attribs3[name] = value;
+    attrib_list3[attrib_name] = *attrib;
+}
+
+void OpenGL::Model::AddAttribute4(const std::string& attrib_name, const glm::vec4 attrib)
+{
+    attrib_list4[attrib_name] = attrib;
+}
+
+void OpenGL::Model::AddAttribute2(const std::string& attrib_name, glm::vec2 attrib)
+{
+    attrib_list2[attrib_name] = attrib;
+}
+
+void OpenGL::Model::AddAttributeF(const std::string& attrib_name, float value)
+{
+    attrib_listF[attrib_name] = value;
+}
+
+OpenGL::CameraProjection OpenGL::Model::calculateCameraProjection(Camera* camera)
+{
+    m_Camera_projection.projection = glm::perspective(glm::radians(camera->fov),
+                                                      (float)WindowManager::window_properties.width / (float)
+                                                      WindowManager::window_properties.height, camera->nearPlane,
+                                                      camera->farPlane);
+    m_Camera_projection.view  = camera->GetViewMatrix();
+    m_Camera_projection.model = glm::mat4(1.0f);
+
+    return m_Camera_projection;
 }
 
 /**
@@ -44,7 +70,7 @@ void OpenGL::Model::addAttrib3(const std::string& name, const glm::vec3& value)
  * \param path Model loading path ex: C:/etc/..
  * \param gamma true by default
  */
-OpenGL::Model::Model(const std::string& path, bool gamma = false) : gammCorrection(gamma)
+OpenGL::Model::Model(const std::string& path, bool gamma = false) : gammaCorrection(gamma), name("No name")
 {
     // shader = new Shader("./data/shaders/vertex.glsl", "./data/shaders/fragment.glsl");
     LoadModel(path);
@@ -53,10 +79,10 @@ OpenGL::Model::Model(const std::string& path, bool gamma = false) : gammCorrecti
     // scale       = glm::vec3{1.0f};
 }
 
-OpenGL::Model::Model(const std::string& path)
+OpenGL::Model::Model(const std::string& path) : name("No name")
 {
-    gammCorrection = false;
-    transform      = Transform{
+    gammaCorrection = false;
+    transform       = Transform{
         glm::vec3{0.0f, 0.0f, 0.0f}, glm::vec3{1.0f}, glm::vec3{1.0f}
 
     };
@@ -65,45 +91,47 @@ OpenGL::Model::Model(const std::string& path)
     LoadModel(path);
 }
 
-void OpenGL::Model::Draw(Camera* camera)
+void OpenGL::Model::Draw(Camera* camera, float* ambientStrength)
 {
-    glm::mat4   projection = glm::perspective(glm::radians(camera->Zoom), (float)1000 / (float)1000, 0.1f, 100.0f);
-    glm::mat4   view       = camera->GetViewMatrix();
-    glm::mat4   model      = glm::mat4(1.0f);
-    std::string table_name = "Mesh: " + name;
+    calculateCameraProjection(camera);
+    const glm::mat4 projection = m_Camera_projection.projection;
+    const glm::mat4 view       = m_Camera_projection.view;
+    glm::mat4       model      = m_Camera_projection.model;
+
+    const std::string table_name            = "Mesh: " + name;
+    const std::string attributes_table_name = "Attributes: " + name;
     ImGui::Begin(table_name.c_str());
 
     ImGui::DragFloat3("Position", &this->transform.position.x, 0.01f, -10.0f, 10.0f);
     ImGui::DragFloat3("Scale", &this->transform.scale.x, 0.01f, 0.0f, 10.0f);
-    ImGui::DragFloat4("Object Color", &this->color.r, 0.01f, 0.0f, 1.0f);
+    ImGui::DragFloat3("Object Color", &attrib_list3["objectColor"][0], 0.01f, 0.0f, 1.0f);
 
     ImGui::End();
 
-    for (unsigned int i = 0; i < Meshes.size(); ++i)
+    for (auto& mesh : Meshes)
     {
         shader->Use();
         shader->setMat4("projection", projection);
         shader->setMat4("view", view);
         model = glm::translate(model, transform.position);
-        model = glm::scale(model, transform.scale); // it's a bit too big for our scene, so scale it down
+        model = glm::scale(model, transform.scale);
         shader->setMat4("model", model);
+        glm::vec3 vec3Color = {this->color.r, this->color.g, this->color.b};
 
-        ImGui::Begin("Attributes");
-        for (auto& [key,value] : m_Attribs3)
+        ImGui::Begin(attributes_table_name.c_str());
+        for (auto& [key,value] : attrib_list3)
         {
-            ImGui::DragFloat3(key.c_str(), &value.x, 0.01f, -1.0f, 1.0f);
+            ImGui::DragFloat3(key.c_str(), &value.x, 0.01f, 0.0f, 1.0f);
             shader->setVec3(key, value);
         }
+        for (auto& [key , value] : attrib_listF)
+        {
+            ImGui::DragFloat(key.c_str(), &value, 0.01f, 0.0f, 1.0f);
+            shader->setFloat(key, value);
+        }
         ImGui::End();
-
-
-        Meshes[i].Draw(*shader);
-
-        // shader->setVec3("objectColor", this->color.r, this->color.g, this->color.b);
-        // shader->setVec3("lightColor", glm::vec3{1.0f});
-        // shader->setVec3("lightPos", this->transform.position + glm::vec3{2});
+        mesh.Draw(*shader);
     }
-    // ImGui::End();
 }
 
 void OpenGL::Model::InitShader(const std::string& vPath, const std::string& fPath)
@@ -111,10 +139,11 @@ void OpenGL::Model::InitShader(const std::string& vPath, const std::string& fPat
     shader = new Shader(vPath.c_str(), fPath.c_str());
 }
 
+
 void OpenGL::Model::LoadModel(std::string path)
 {
     Assimp::Importer import;
-    const aiScene*   scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+    const aiScene*   scene = import.ReadFile(path, aiProcess_Triangulate);
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
         std::cout << "ERROR::ASSIMP::" << import.GetErrorString() << std::endl;
@@ -274,4 +303,13 @@ unsigned OpenGL::Model::TextureFromFile(const char* path, const std::string& dir
     }
 
     return textureID;
+}
+
+void OpenGL::Model::Notify(int key, int action)
+{
+    InputListener::Notify(key, action);
+    if (key == GLFW_KEY_RIGHT)
+    {
+        transform.position += glm::vec3{1.0f, 0, 0};
+    }
 }

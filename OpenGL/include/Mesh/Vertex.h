@@ -6,6 +6,7 @@ namespace OpenGL
 {
 #define MAX_BONE_INFLUENCE 4
 
+
     struct Vertex
     {
         glm::vec3 Position;
@@ -16,12 +17,5 @@ namespace OpenGL
 
         int   m_BoneIDs[MAX_BONE_INFLUENCE];
         float m_Weights[MAX_BONE_INFLUENCE];
-    };
-
-    struct Texture
-    {
-        unsigned int id;
-        std::string  type;
-        std::string  path;
     };
 }
